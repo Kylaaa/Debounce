@@ -1,0 +1,6 @@
+[package]
+name = "kylaaa/debounce"
+version = "0.0.1"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+include = ["Src", "default.project.json"]
