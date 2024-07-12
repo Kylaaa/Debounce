@@ -1,12 +1,15 @@
+--!strict
 local createScriptConnectionToken = require(script.Parent.createScriptConnectionToken)
 
 local Players = game:GetService("Players")
 
-return function(part : BasePart, onTouchStarted : (Player)->(), onTouchEnded : (Player)->()?) : ScriptConnection
-	local playersTouching = {}
+type playerWhoTouchedCallback = (player:Player)->()
+
+return function(part : BasePart, onTouchStarted : playerWhoTouchedCallback, onTouchEnded : playerWhoTouchedCallback?) : createScriptConnectionToken.ScriptConnection
+	local playersTouching : { [Player]:number } = {}
 
 	local onTouchStartedConnection = part.Touched:Connect(function(otherPart : BasePart)
-		if not otherPart.Parent:IsA("Model") then
+		if otherPart.Parent and not otherPart.Parent:IsA("Model") then
 			return
 		end
 
@@ -17,14 +20,14 @@ return function(part : BasePart, onTouchStarted : (Player)->(), onTouchEnded : (
 
 		if not playersTouching[player] then
 			playersTouching[player] = 1
-			onTouchedStarted(player)
+			onTouchStarted(player)
 		else
 			playersTouching[player] += 1
 		end
 	end)
 
-	local onTouchEndedConnection = part.Touched:Connect(function(otherPart : BasePart)
-		if not otherPart.Parent:IsA("Model") then
+	local onTouchEndedConnection = part.TouchEnded:Connect(function(otherPart : BasePart)
+		if otherPart.Parent and not otherPart.Parent:IsA("Model") then
 			return
 		end
 
@@ -37,8 +40,10 @@ return function(part : BasePart, onTouchStarted : (Player)->(), onTouchEnded : (
 			playersTouching[player] -= 1
 
             if playersTouching[player] <= 0 then
-            	playersTouching[player] = nil
-            	onTouchEnded(player)
+				playersTouching[player] = nil
+				if onTouchEnded then
+					onTouchEnded(player)
+				end
             end
 		end
 	end)

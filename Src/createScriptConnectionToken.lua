@@ -1,11 +1,11 @@
+--!strict
 -- type to mirror Roblox's native RBXScriptConnection
 -- https://create.roblox.com/docs/reference/engine/datatypes/RBXScriptConnection
 export type ScriptConnection = {
 	Disconnect : (ScriptConnection)->(),
-	Connected : bool,
-
+	Connected : boolean,
 }
-return function(onDisconnect : ()->()) : ScriptConnection {
+return function(onDisconnect : ()->()) : ScriptConnection
 	local connection : ScriptConnection = {
 		Connected = true,
 
@@ -20,4 +20,4 @@ return function(onDisconnect : ()->()) : ScriptConnection {
 	}
 
 	return connection
-}
+end
